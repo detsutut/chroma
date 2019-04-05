@@ -1,0 +1,1 @@
+matlab -nodisplay -nosplash -nodesktop -minimize -r "try, run('.\videoProcessing.m'), catch, exit, end, exit"
