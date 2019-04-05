@@ -18,8 +18,12 @@ library(circlize)
 library(jpeg)
 library(scales)
 
-source(file.path(.session$homedir,"src/colors.R"), echo = FALSE)
-source(file.path(.session$homedir,"src/parsing.R"), echo = FALSE)
+source(file.path(.session$homedir,"colors.R"), echo = FALSE)
+source(file.path(.session$homedir,"parsing.R"), echo = FALSE)
 
 options(warn = oldw)
 rm(oldw)
+
+fileName = function(name,ext="png"){
+  return(paste(name,format(Sys.time(),"%d%m%H%M%S"),".",ext,sep = ""))
+}

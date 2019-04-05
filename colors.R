@@ -1,5 +1,3 @@
-.linesize = list("ultrathin"=1500,"thin"=900,"middle"=500,"bold"=250,"bold"=140)
-
 luminance = function(r,g,b){
   return((r * 0.3) + (g * 0.59) + (b * 0.11))
 }
@@ -180,7 +178,7 @@ testColor = function(hexString){
   cat("HSL: ",col2hsl(hexString),"\nRGB: ",col2rgb(hexString),"\n")
 }
 
-plotFrameline = function(frames, verbose = 0, summary = TRUE, vivid = FALSE, timeScale = TRUE, title=toupper(.session$name),
+plotFrameline = function(frames, verbose = 0, summary = TRUE, vivid = FALSE, timeScale = TRUE, title="MOVIE FRAMELINE",
                          subtitle="frameline"){
   if(length(frames$R)>0) return(plotSingleFrameline(frames = frames,verbose = verbose, summary = summary, vivid = vivid,
                                                     title = title, subtitle = subtitle))
@@ -188,9 +186,24 @@ plotFrameline = function(frames, verbose = 0, summary = TRUE, vivid = FALSE, tim
                                  title=title, subtitle=subtitle))
 }
 
-plotSingleFrameline = function(frames, verbose = 0, summary = TRUE, vivid = FALSE, title=toupper(.session$name),
+plotTimeWindows = function(vivid = TRUE, verbose = 1,title="Movie frameline",subtitle = "Time Windows",left="window width [seconds]"){
+  frames =getFrames()[[1]]
+  seconds = round(exp(c(0:round(log(attributes(frames)$duration/2)))))
+  gglist = list()
+  for(i in 1:length(seconds)){
+    f = groupframes(frames,seconds = seconds[i])
+    attributes(f)$title = seconds[i]
+    p=plotSingleFrameline(f, verbose = verbose, vivid = vivid)
+    gglist[[i]] = p
+  }
+  if(verbose==0) title = left = subtitle = NULL
+  f = do.call("grid.arrange", c(grobs = gglist, ncol=1,top = toupper(title),left = left, bottom = subtitle))
+}
+
+plotSingleFrameline = function(frames, verbose = 0, summary = TRUE, vivid = FALSE, title="MOVIE FRAMELINE",
                          subtitle="frameline", xlim = NULL){
   frames$mins = frames$seconds/60                                            #x unit = minutes
+  unit = (frames[2,]$seconds-frames[1,]$seconds)/60
   if(is.null(xlim)) xlim = max(frames$mins)                                                  
   if(vivid) {
     frames$hexRGB = vividHex(frames$hexRGB, intensity = "light")
@@ -203,7 +216,7 @@ plotSingleFrameline = function(frames, verbose = 0, summary = TRUE, vivid = FALS
   usr_palette = frames$hexRGB                                                #define a palette for ggplot's fields
   names(usr_palette) = usr_palette
   p = ggplot(data=frames,aes(x=mins))+
-    geom_rect(mapping=aes(xmin=mins-1, xmax=mins,                            #build tiles
+    geom_rect(mapping=aes(xmin=mins-unit, xmax=mins,                            #build tiles
                           ymin=1,
                           ymax=0, fill=hexRGB), alpha=1)                     #fill tiles with RGB frame color
   if(summary){
@@ -228,7 +241,7 @@ plotSingleFrameline = function(frames, verbose = 0, summary = TRUE, vivid = FALS
 }
 
 plotMultiFrameline = function(framescollection, verbose = 0, summary = TRUE, vivid = FALSE, timeScale = TRUE, 
-                              title=toupper(.session$name), subtitle="frameline"){
+                              title="MOVIES FRAMELINES", subtitle="frameline"){
   ggplot.list =  vector("list", length(framescollection))
   if(verbose>1) verbose.iter=1 else verbose.iter=verbose
   for(i in 1:length(framescollection)){
@@ -242,59 +255,13 @@ plotMultiFrameline = function(framescollection, verbose = 0, summary = TRUE, viv
   return(do.call("grid.arrange", c(grobs = ggplot.list, ncol=1, top = toupper(title),bottom = subtitle)))
 }
 
-plotFramesCollection = function(framescollection, season=0, verbose =0, summary = TRUE, 
-                                vivid = FALSE, scaleTime = TRUE){
-  maxlen = max(unlist(lapply(framescollection,function(x){max(x$seconds)})))/60
-  allseasons = length(season)==1 && season==0
-  ggplot.list =  vector("list", length(framescollection)) 
-  for(i in 1:length(framescollection)){
-    frames = framescollection[[i]]
-    if(!allseasons && is.na(match(attributes(frames)$season,season))) next
-    frames$mins = frames$seconds/60
-    if(scaleTime) maxlen = max(frames$mins)
-    if(vivid){
-      frames$hexRGB = vividHex(frames$hexRGB, intensity = "light")
-    }
-    p = ggplot(data=frames,aes(x=mins))+
-      geom_rect(mapping=aes(xmin=mins-1, xmax=mins, 
-                            ymin=1,
-                            ymax=0, fill=hexRGB), alpha=1)
-    if(summary) {
-      if(vivid) rectfill = vividHex(attributes(frames)$avgRGB[[1]], intensity = "ultra")
-      else rectfill = attributes(frames)$avgRGB[[1]]
-      p=p+
-        annotate("rect", xmin = maxlen+0.005*maxlen, xmax = maxlen+0.02*maxlen, 
-                 ymin = 0, ymax = 1,
-                 fill = rectfill,
-                 linetype = 0, color = vividHex(attributes(frames)$avgRGB[[1]], intensity = "light"),
-                 size=0.6)
-    }
-    temp_hex = frames$hexRGB
-    names(temp_hex) = temp_hex
-    p=p+
-      scale_fill_manual(values = temp_hex)+
-      scale_x_continuous(expand = c(0.01, 0), breaks = seq(0,maxlen,5))+
-      guides(fill=FALSE) +
-      labs(y = attributes(frames)$title)
-    if(verbose == 0) p = p + theme_void()
-    else p = p + .theme_semiVoid(FALSE)
-    if(verbose > 1 && i==length(framescollection)) p = p + .theme_semiVoid(!scaleTime)
-    ggplot.list[[i]] = p
-  }
-  ggplot.list = Filter(Negate(is.null), ggplot.list)
-  if(verbose > 0) title = toupper(.session$name) else title = NULL
-  if(allseasons) f = do.call("grid.arrange", ggplot.list)
-  else  f = do.call("grid.arrange", c(grobs = ggplot.list, ncol=1, top = title))
-  return(f)
-}
-
 .brighter = function(hexString){
   temp = attributes(hex2RGB(hexString))$coords[1,]*1.5
   if(max(temp)>1) return(rgb(red=temp["R"], green=temp["G"], blue=temp["B"],maxColorValue = max(temp)))
   else return(rgb(red=temp["R"], green=temp["G"], blue=temp["B"]))
 }
 
-plotTilesSummary = function(summary,mode="",verbose = 0){
+plotTilesSummary = function(summary,mode="",verbose = 0,title="MOVIE SUMMARY", subtitle=""){
   switch(mode,
          h={
            temp_hex = unlist(lapply(summary$RGB,hueOnly))
@@ -362,7 +329,6 @@ plotTilesSummary = function(summary,mode="",verbose = 0){
     p=p+geom_text(data=summary,aes(label=text),color="black")
   }
   p=p +
-    # scale_fill_gradient(low = "grey", high = "grey20")+
     scale_x_continuous(expand=c(0,0),position = "top",
                        breaks = c(summary$episode),labels = paste("EP",summary$episode)) + 
     scale_y_continuous(expand=c(0,0),
@@ -372,8 +338,8 @@ plotTilesSummary = function(summary,mode="",verbose = 0){
           panel.background = element_blank(), axis.line = element_blank(),
           axis.title=element_blank(),plot.title = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5) )+
-    labs(title=toupper(.session$name),
-         subtitle = "Data exploration and visualization through colors",
+    labs(title=toupper(title),
+         subtitle = subtitle,
          caption = caption)
   plot(p)
   return(p)
@@ -439,7 +405,7 @@ plotLines = function(frames){
                plot.tag.position = "topleft", complete = TRUE))
 }
 
-extractFramePalette = function(jpegFramePath = NULL, paletteDim = 10){
+extractFramePalette = function(jpegFramePath = NULL, paletteDim = 10,title="FRAME ANALYSIS", subtitle="Palette"){
   if(is.null(jpegFramePath)) jpegFramePath = choose.files(default = framesPath, caption = "Select files",
                                                           multi = FALSE)
   jpegFrame <- readJPEG(jpegFramePath)
@@ -483,7 +449,7 @@ extractFramePalette = function(jpegFramePath = NULL, paletteDim = 10){
     scale_fill_manual(values = temp_hex)+
     guides(fill=FALSE)+
     theme_void()+
-    labs(title=toupper(.session$name),
-         subtitle = "Data exploration and visualization through colors")
+    labs(title=toupper(title),
+         subtitle = subtitle)
   plot(p)
 }

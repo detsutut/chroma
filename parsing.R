@@ -8,8 +8,8 @@ getFrames = function(orderBySeason=FALSE){
   paths = choose.files(caption = "Select files",multi = TRUE,                         #get file paths
                        filters = matrix(c("All files","*.*","Csv files","*.csv"),    
                                         ncol = 2, byrow = TRUE ))
-  names = tools::file_path_sans_ext(basename(paths))                                  #    file names
-  .session$framespath = unique(dirname(paths))[1]                                     #    output path
+  names = tools::file_path_sans_ext(basename(paths))                                  #get file names
+  .session$framespath <<- unique(dirname(paths))[1]                                     #    output path
   csvRGB = lapply(paths,function(path){read.csv(path,header = FALSE)})                #    csv files
   framesCollection = list()
   #=================================================
@@ -25,7 +25,8 @@ getFrames = function(orderBySeason=FALSE){
                         stringsAsFactors = FALSE)
     attr(frames, "avgRGB") <- rgb(mean(frames$R), mean(frames$G), mean(frames$B),     #hex color of the clip
                                   maxColorValue = 255)
-    attr(frames, "title") <- names[i]                                                 #name of the clip
+    attr(frames, "title") <- names[i]  
+    attr(frames, "duration") <- round(max(frames$frameId)/.session$fps)
     framesCollection[[i]] = frames
   }
   if(orderBySeason) return(framesCollection[order(getSeason(names),getEpisode(names))])
@@ -42,10 +43,13 @@ groupframes = function(frames,seconds=NULL,fps=.session$fps){
   }
   #1 group of frames = 1 colored tile = *seconds* sec of clip
   numFrames = round(fps*seconds) #number of frames for each group
+  oldw <- getOption("warn")
+  options(warn = -1)
   R = colMeans(matrix(frames$R, nrow=numFrames)) #average for each group of numFrames frames
   G = colMeans(matrix(frames$G, nrow=numFrames))
   B = colMeans(matrix(frames$B, nrow=numFrames))
   lum = colMeans(matrix(frames$lum, nrow=numFrames))
+  options(warn = oldw)
   seconds = (1:length(R))*seconds
   hexRGB = rgb(R,G,B, max=255) #color of each tile
   frames.reduced = data.frame(cbind(seconds,hexRGB,lum,R,G,B),stringsAsFactors = FALSE)

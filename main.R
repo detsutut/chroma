@@ -1,36 +1,35 @@
 .session = list(
-  name = "MIYAZAKI COLLECTION",
   fps = 24,
   linesize = list("ultrathin"=1500,"thin"=900,"middle"=500,"bold"=250,"bold"=140),
-  homedir = dirname(dirname(rstudioapi::getSourceEditorContext()$path)),
-  framespath = dirname(dirname(rstudioapi::getSourceEditorContext()$path))
+  homedir = dirname(rstudioapi::getSourceEditorContext()$path),
+  framespath = dirname(rstudioapi::getSourceEditorContext()$path)
 )
 
-source(file.path(.session$homedir,"src/init.R"), echo = FALSE)
+source(file.path(.session$homedir,"init.R"), echo = FALSE)
 
-framelines = getFrames()
+framelines = lapply(getFrames(),function(x){groupframes(x,seconds = 10)})
+framelines.summary = getSummary(framelines)
 
-framelines.redux = lapply(framelines,function(x){groupframes(x,seconds = 10)})
+p = plotTimeWindows(verbose = 1,title = "Nausicaa of the Valley of the Wind     Princess Mononoke")
+ggsave(fileName("frameline",ext = "png"), plot = p, path = .session$framespath,
+       dpi = "retina",  device = "png", scale = 1, width = 9, height = 16)
 
-####Try different groupings
-# seconds = c(1,5,10,20,35,60,120,200,500,1000)
-# gglist = list()
-# for(second in seconds){
-#   framelines.redux = lapply(framelines,function(x){groupframes(x,seconds = second)})[1:2]
-#   p=plotFramesCollection(framelines.redux, season = c(1,2,3,4,5),
-#                          verbose = 0, vivid = TRUE, scaleTime = TRUE)
-# }
-# f = do.call("grid.arrange", c(grobs = gglist, ncol=1))
+p = plotFrameline(framelines,
+              vivid = TRUE,
+              verbose = 1, 
+              timeScale = TRUE,
+              summary = TRUE,
+              title = "MIYAZAKI",
+              subtitle = "Movie Collection")
+ggsave(fileName("frameline",ext = "png"), plot = p, path = .session$framespath,
+       dpi = "retina",  device = "png", scale = 1.5, width = 9, height = 16)
 
-plotFrameline(framelines.redux,vivid = TRUE,verbose = 1, timeScale = TRUE,
-               title = "LOVE, DEATH + ROBOTS", summary = TRUE,
-               subtitle = "Episodes framelines")
 
 #PRINT FRAMELINES
 p = plotFramesCollection(framelines.redux, season = c(1,2,3,4,5),
                          verbose = 2, vivid = FALSE, scaleTime = TRUE)
 ggsave("allFrames.png", plot = p, dpi = "retina",
-       device = "png", path = framesPath, scale = 1.5, width = 16, height = 9)
+       device = "png", path = .session$framespath, scale = 1.5, width = 16, height = 9)
 p = plotFramesCollection(framelines.redux, season = c(1,2,3,4,5),
                          verbose = 2, vivid = TRUE, scaleTime = TRUE)
 ggsave("allFramesVivid.png", plot = p, dpi = "retina",
@@ -44,7 +43,7 @@ p = plotFramesCollection(framelines.redux, season = c(1,2,3,4,5),
 ggsave("allFramesArt.png", plot = p, dpi = "retina",
        device = "png", path = framesPath, scale = 1.5, width = 16, height = 9)
 
-summary = getSummary(framelines.redux)
+
 
 p= plotTilesSummary(summary)
 
