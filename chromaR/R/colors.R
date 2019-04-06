@@ -616,11 +616,11 @@ extractFramePalette <- function(jpegFramePath = NULL, paletteDim = 10,title="FRA
   height <- dim(jpegFrame)[1]
   width <- dim(jpegFrame)[2]
   df <- data.frame(
-    x <- rep(1:width, each = height),
-    y <- rep(height:1, width),
-    R <- as.vector(jpegFrame[,,1]),
-    G <- as.vector(jpegFrame[,,2]),
-    B <- as.vector(jpegFrame[,,3])
+    x = rep(1:width, each = height),
+    y = rep(height:1, width),
+    R = as.vector(jpegFrame[,,1]),
+    G = as.vector(jpegFrame[,,2]),
+    B = as.vector(jpegFrame[,,3])
   )
   km <- kmeans(df[,c("R","G","B")], centers = paletteDim, iter.max = 30)
   colorPalette <- vividHex(rgb(km$centers),intensity = "light")

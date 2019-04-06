@@ -22,22 +22,14 @@ p = plotFrameline(framelines,
               subtitle = "Sub Test")
 
 p= plotTilesSummary(framelines.summary,
-                    mode = "lum", verbose = 0,
-                    title = "Title Test", subtitle = "")
+                    mode = "lum",
+                    verbose = 0,
+                    title = "Title Test",
+                    subtitle = "")
 
-ggsave("tilesSummary.png", plot = p, dpi = "retina",
-       device = "png", path = framesPath, scale = 1.5, width = 6, height = 3)
+colorCircle(framelines[[1]],extra = TRUE)
 
-p= plotTilesSummary(summary,mode="lum")
-
-ggsave("tilesLum.png", plot = p, dpi = "retina",
-       device = "png", path = framesPath, scale = 1.5, width = 6, height = 3)
-p= plotTilesSummary(summary,mode="h")
-
-ggsave("tilesHue.png", plot = p, dpi = "retina",
-       device = "png", path = framesPath, scale = 1.5, width = 6, height = 3)
-
-p= plotTilesSummary(summary,mode="s")
+temperature(framelines[[1]])
 
 ggsave("tilesSat.png", plot = p, dpi = "retina",
        device = "png", path = framesPath, scale = 1.5, width = 6, height = 3)
@@ -47,6 +39,5 @@ for(i in 1:length(framelines.redux)){
   dev.copy(png,file.path(framesPath,paste("circle",i,".png",sep="")))
   dev.off()
 }
-temperature(framelines.redux[[i]])
 
 extractFramePalette(paletteDim = 5)
