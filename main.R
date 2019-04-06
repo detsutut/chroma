@@ -1,27 +1,24 @@
-.session = list(
-  fps = 24,
-  linesize = list("ultrathin"=1500,"thin"=900,"middle"=500,"bold"=250,"bold"=140),
-  homedir = dirname(rstudioapi::getSourceEditorContext()$path),
-  framespath = dirname(rstudioapi::getSourceEditorContext()$path)
-)
+#workspace cleaning
+remove(list = ls())
+cat("\014")
 
-source(file.path(.session$homedir,"init.R"), echo = FALSE)
+library(chromaR)
 
 framelines = lapply(getFrames(),function(x){groupframes(x,seconds = 10)})
 framelines.summary = getSummary(framelines)
 
 p = plotTimeWindows(verbose = 1,title = "Nausicaa of the Valley of the Wind     Princess Mononoke")
-ggsave(fileName("frameline",ext = "png"), plot = p, path = .session$framespath,
+ggsave(fileName("frameline",ext = "png"), plot = p, path = chromaRenv$framespath,
        dpi = "retina",  device = "png", scale = 1, width = 9, height = 16)
 
 p = plotFrameline(framelines,
               vivid = TRUE,
-              verbose = 1, 
+              verbose = 1,
               timeScale = TRUE,
               summary = TRUE,
               title = "MIYAZAKI",
               subtitle = "Movie Collection")
-ggsave(fileName("frameline",ext = "png"), plot = p, path = .session$framespath,
+ggsave(fileName("frameline",ext = "png"), plot = p, path = getwd(),
        dpi = "retina",  device = "png", scale = 1.5, width = 9, height = 16)
 
 
@@ -29,7 +26,7 @@ ggsave(fileName("frameline",ext = "png"), plot = p, path = .session$framespath,
 p = plotFramesCollection(framelines.redux, season = c(1,2,3,4,5),
                          verbose = 2, vivid = FALSE, scaleTime = TRUE)
 ggsave("allFrames.png", plot = p, dpi = "retina",
-       device = "png", path = .session$framespath, scale = 1.5, width = 16, height = 9)
+       device = "png", path = chromaRenv$framespath, scale = 1.5, width = 16, height = 9)
 p = plotFramesCollection(framelines.redux, season = c(1,2,3,4,5),
                          verbose = 2, vivid = TRUE, scaleTime = TRUE)
 ggsave("allFramesVivid.png", plot = p, dpi = "retina",

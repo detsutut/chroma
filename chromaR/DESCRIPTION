@@ -1,0 +1,24 @@
+Package: chromaR
+Type: Package
+Title: Chromatic analysis and exploration of a video source
+Version: 0.1.0
+Author: Tommaso Buonocore <buonocore.tsm@gmail.com>
+Maintainer:  Tommaso Buonocore <buonocore.tsm@gmail.com>
+Description: R toolkit to analyze and explore chromatic storytelling in any video source
+    in any video source, previously converted in a csv sequence of frames.
+Imports:
+  dplyr,
+  stringr,
+  ggplot2,
+  corrplot,
+  Hmisc,
+  grid,
+  gridExtra,
+  plotwidgets,
+  circlize,
+  jpeg,
+  scales
+License: file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
