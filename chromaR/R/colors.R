@@ -277,8 +277,13 @@ plotColor <- function(hexString){
 #' @export
 plotFrameline <- function(frames, verbose = 0, summary = TRUE, vivid = FALSE, timeScale = TRUE, title="MOVIE FRAMELINE",
                          subtitle="frameline"){
-  if(length(frames$R)>0) return(plotSingleFrameline(frames = frames,verbose = verbose, summary = summary, vivid = vivid,
+  if(length(frames)==1) {
+    return(plotSingleFrameline(frames = frames[[1]],verbose = verbose, summary = summary, vivid = vivid,
                                                     title = title, subtitle = subtitle))
+  } else if(is.data.frame(frames)){
+    return(plotSingleFrameline(frames = frames,verbose = verbose, summary = summary, vivid = vivid,
+                               title = title, subtitle = subtitle))
+  }
   else return(plotMultiFrameline(framescollection = frames, verbose = verbose, summary = summary, vivid = vivid, timeScale = timeScale,
                                  title=title, subtitle=subtitle))
 }
@@ -423,6 +428,13 @@ plotMultiFrameline <- function(framescollection, verbose = 0, summary = TRUE, vi
 #' @export
 plotTilesSummary <- function(summary,mode="",verbose = 0,title="MOVIE SUMMARY", subtitle=""){
   episode<-season<-hex<-NULL
+  if(!any(is.na(getSeason(summary$title))) & !any(is.na(getEpisode(summary$title)))){
+    summary$season = getSeason(summary$title)
+    summary$episode = getEpisode(summary$title)
+  } else {
+    summary$episode = summary$frameId
+    summary$season = rep(1,length(summary$frameId))
+  }
   switch(mode,
          h={
            temp_hex <- unlist(lapply(summary$RGB,hueOnly))
@@ -432,9 +444,7 @@ plotTilesSummary <- function(summary,mode="",verbose = 0,title="MOVIE SUMMARY", 
            dist <- unlist(lapply(summary$RGB,function(x){isWarm(x)$dist}))
            max <- summary[which(dist == max(dist)),]
            min <- summary[which(dist == min(dist)),]
-           caption <-paste("HUE channel (coldest:",
-                          "S",max$season,"E",max$episode,
-                          " warmest: S",min$season,"E",min$episode,")",sep="")
+           caption <-paste("HUE channel (coldest:", max$title, " warmest: ",min$title,")",sep="")
            p <- ggplot(data = summary, aes(x = episode, y = season)) +
              geom_tile(data = summary, aes(fill = hex),width=0.85, height=0.85) +
              scale_fill_manual(values = temp_hex)+
@@ -448,16 +458,11 @@ plotTilesSummary <- function(summary,mode="",verbose = 0,title="MOVIE SUMMARY", 
            text <- val
            max <- summary[which(val == max(val)),]
            min <- summary[which(val == min(val)),]
-           caption <-paste("BRIGHTNESS channel (max:",
-                          "S",max$season,"E",max$episode,
-                          " min: S",min$season,"E",min$episode,")",sep="")
            p <- ggplot(data = summary, aes(x = episode, y = season)) +
              geom_tile(data = summary, aes(fill = hex),width=0.85, height=0.85) +
              scale_fill_manual(values = temp_hex)+
              guides(fill=FALSE)
-           caption <-paste("SATURATION channel (max:",
-                          "S",max$season,"E",max$episode,
-                          " min: S",min$season,"E",min$episode,")",sep="")
+           caption <-paste("SATURATION channel (max:", max$title, " min: ",min$title,")",sep="")
          },
          lum={
            temp_hex <- unlist(lapply(summary$RGB,lumOnly))
@@ -466,16 +471,14 @@ plotTilesSummary <- function(summary,mode="",verbose = 0,title="MOVIE SUMMARY", 
            max <- summary[which(summary$lum == max(summary$lum)),]
            min <- summary[which(summary$lum == min(summary$lum)),]
            text <- summary$lum
-           caption <-paste("BRIGHTNESS channel (brightest:",
-                          "S",max$season,"E",max$episode,
-                          " darkest: S",min$season,"E",min$episode,")",sep="")
+           caption <-paste("BRIGHTNESS channel (brightest:", max$title, " darkest: ",min$title,")",sep="")
            p <- ggplot(data = summary, aes(x = episode, y = season)) +
              geom_tile(data = summary, aes(fill = hex),width=0.85, height=0.85) +
              scale_fill_manual(values = temp_hex)+
              guides(fill=FALSE)
          },
          {
-           temp_hex <- unlist(lapply(summary$RGB,vividHex))
+           temp_hex <- unlist(lapply(summary$RGB,function(x){vividHex(x,intensity = "strong")}))
            names(temp_hex) <- temp_hex
            summary$hex <- temp_hex
            caption <- ""
@@ -491,9 +494,10 @@ plotTilesSummary <- function(summary,mode="",verbose = 0,title="MOVIE SUMMARY", 
   }
   p<-p +
     scale_x_continuous(expand=c(0,0),position = "top",
-                       breaks = c(summary$episode),labels = paste("EP",summary$episode)) +
+                       breaks = c(summary$episode),labels = paste(strtrim(summary$title,4),
+                                                                  ifelse(length(summary$title)>4,"...",""))) +
     scale_y_continuous(expand=c(0,0),
-                       breaks = c(summary$season),labels = paste("S",summary$season)) +
+                       breaks = c(summary$season),labels = summary$season) +
     theme_minimal() +
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           panel.background = element_blank(), axis.line = element_blank(),

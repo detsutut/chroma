@@ -131,7 +131,7 @@ getSeason <- function(names){return(as.numeric(str_extract(names,"\\d*(?=e)")))}
 #' @examples
 #' print("example")
 #'
-getEpisode <- function(names){return(as.numeric( str_extract(names,"\\d*(?=\\.)")))}
+getEpisode <- function(names){return(as.numeric( str_extract(names,"\\d*(?=$)")))}
 
 #' range
 #'

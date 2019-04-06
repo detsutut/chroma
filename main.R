@@ -7,42 +7,23 @@ library(chromaR)
 framelines = lapply(getFrames(),function(x){groupframes(x,seconds = 10)})
 framelines.summary = getSummary(framelines)
 
-p = plotTimeWindows(verbose = 1,title = "Nausicaa of the Valley of the Wind     Princess Mononoke")
-ggsave(fileName("frameline",ext = "png"), plot = p, path = chromaRenv$framespath,
-       dpi = "retina",  device = "png", scale = 1, width = 9, height = 16)
+p = plotTimeWindows(verbose = 1,
+                    vivid = TRUE,
+                    title = "Title Test",
+                    subtitle = "Sub Test",
+                    left = "Left Test")
 
 p = plotFrameline(framelines,
               vivid = TRUE,
               verbose = 1,
               timeScale = TRUE,
               summary = TRUE,
-              title = "MIYAZAKI",
-              subtitle = "Movie Collection")
-ggsave(fileName("frameline",ext = "png"), plot = p, path = getwd(),
-       dpi = "retina",  device = "png", scale = 1.5, width = 9, height = 16)
+              title = "Title Test",
+              subtitle = "Sub Test")
 
-
-#PRINT FRAMELINES
-p = plotFramesCollection(framelines.redux, season = c(1,2,3,4,5),
-                         verbose = 2, vivid = FALSE, scaleTime = TRUE)
-ggsave("allFrames.png", plot = p, dpi = "retina",
-       device = "png", path = chromaRenv$framespath, scale = 1.5, width = 16, height = 9)
-p = plotFramesCollection(framelines.redux, season = c(1,2,3,4,5),
-                         verbose = 2, vivid = TRUE, scaleTime = TRUE)
-ggsave("allFramesVivid.png", plot = p, dpi = "retina",
-       device = "png", path = framesPath, scale = 1.5, width = 9, height = 16)
-p = plotFramesCollection(framelines.redux, season = c(1,2,3,4,5),
-                         verbose = 2, vivid = TRUE, scaleTime = FALSE)
-ggsave("allFramesVividTime.png", plot = p, dpi = "retina",
-       device = "png", path = framesPath, scale = 1.5, width = 16, height = 9)
-p = plotFramesCollection(framelines.redux, season = c(1,2,3,4,5),
-                         verbose = 0, vivid = TRUE, scaleTime = TRUE)
-ggsave("allFramesArt.png", plot = p, dpi = "retina",
-       device = "png", path = framesPath, scale = 1.5, width = 16, height = 9)
-
-
-
-p= plotTilesSummary(summary)
+p= plotTilesSummary(framelines.summary,
+                    mode = "lum", verbose = 0,
+                    title = "Title Test", subtitle = "")
 
 ggsave("tilesSummary.png", plot = p, dpi = "retina",
        device = "png", path = framesPath, scale = 1.5, width = 6, height = 3)
