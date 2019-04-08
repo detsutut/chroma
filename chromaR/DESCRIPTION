@@ -1,7 +1,7 @@
 Package: chromaR
 Type: Package
 Title: Chromatic analysis and exploration of a video source
-Version: 0.1.1
+Version: 0.2.0
 Author: Tommaso Buonocore <buonocore.tsm@gmail.com>
 Maintainer:  Tommaso Buonocore <buonocore.tsm@gmail.com>
 Description: R toolkit to analyze and explore chromatic storytelling in any video source

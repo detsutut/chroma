@@ -215,28 +215,94 @@ temperature <- function(frames){
   frames$tf<- unlist(lapply(frames$hexRGB,function(y){isWarm(y)$temp}))
   frames$distance<- unlist(lapply(frames$hexRGB,function(y){isWarm(y)$dist}))
   frames$distanceFromTop<-1-ifelse(frames$distance>90,frames$distance-90,frames$distance)
-  palette <- list("WARM"="#FF1A00","COLD"="#2185D0","NEUTRAL"="#F2F2F2")
+  palette <- list("WARM"="#8B0000","COLD"="#1E4155","NEUTRAL"="#3D3B3E")
   unit <- frames$seconds[2]-frames$seconds[1]
+  derivative <- diff(frames$distance)/diff(frames$seconds)
+  derivative[length(derivative)+1]=derivative[length(derivative)]
+  frames$derivative = derivative
   p <- ggplot(data=frames,aes(x=seconds))+
     geom_rect(mapping=aes(xmin=seconds-unit, xmax=seconds,
                           ymin=1,
                           ymax=0, fill=tf,alpha=distanceFromTop))+
-    geom_line(aes(y = range(distance)), stat="smooth",method = "lm",
-              formula = y ~ poly(x, 26), se = FALSE,color = "#70005A",alpha=0.6,size=2)+
     scale_fill_manual(name = "Temperature", values = unlist(palette))+
     geom_line(aes(y = range(distance)), stat="smooth",method = "lm",
-              formula = y ~ poly(x, 26), se = FALSE,color = "white",alpha=0.2,size=1)+
+              formula = y ~ poly(x, 26), se = FALSE,color = "white",alpha=0.8,size=1)+
     geom_line(aes(y = range(distance)), stat="smooth",method = "lm", linetype = "dotted",
-              formula = y ~ poly(x, 1), se = FALSE,color = "#70005A",alpha=0.8,size=1)+
-    scale_alpha_continuous(name = "Distance from pole",range = c(0.4, 1),
+              formula = y ~ poly(x, 1), se = FALSE,color = "white",alpha=0.8,size=1)+
+    geom_line(aes(y = distance*0+0.01), color = "white",linetype = "longdash",alpha=0.8,size=1)+
+    geom_line(aes(y = distance*0+0.32), color = "yellow",linetype = "longdash",alpha=0.8,size=1)+
+    geom_line(aes(y = distance*0+0.33), color = "magenta",linetype = "longdash",alpha=0.8,size=1)+
+    geom_line(aes(y = distance*0+0.65), color = "green",linetype = "longdash",alpha=0.8,size=1)+
+    geom_line(aes(y = distance*0+0.66), color = "blue",linetype = "longdash",alpha=0.8,size=1)+
+    geom_line(aes(y = distance*0+0.99), color = "cyan",linetype = "longdash",alpha=0.8,size=1)+
+    scale_alpha_continuous(name = "Distance from pole",range = c(0.7, 1),
                            breaks = c(0,-20,-40,-60,-80), labels = c("0\u00B0","20\u00B0","40\u00B0","60\u00B0","80\u00B0"))+
     scale_y_continuous(breaks = c(0,0.33,0.66,1), labels = c("0\u00B0\n(R)","60\u00B0\n(Y/M)","120\u00B0\n(G/B)","180\u00B0\n(C)"),expand = c(0.01, 0))+
     scale_x_continuous(expand = c(0.01, 0))+
     labs(title = "Temperature Analysis", subtitle = waiver(), caption = waiver(),
-         tag = waiver(),x = "seconds",y = "Distance from pure red")
+         tag = waiver(),x = "seconds",y = "Distance from pure red")+
     theme_minimal()
   plot(p)
-  temp_perc <- length(which(frames$tf=="WARM"))/length(frames$tf)
+}
+
+#' plotChannel
+#'
+#' plotChannel
+#'
+#' @param frames frames
+#' @param channel hsl
+#' @param npoly npoly
+#'
+#' @return none
+#'
+#' @examples
+#' print("example")
+#'
+#' @export
+plotChannel <- function(frames,channel=c("h","s","l","r","g","b"),npoly = c(1,2,3)){
+  seconds<-fcolor<-hexRGB<-NULL
+  if(channel %in% c("r","g","b")) frames$channel <- frames[,toupper(channel)]
+  else frames$channel<- hslGet(frames$hexRGB,channel)
+  unit <- frames$seconds[2]-frames$seconds[1]
+  derivative <- diff(frames$channel)/diff(frames$seconds)
+  derivative[length(derivative)+1]=derivative[length(derivative)]
+  mult = 2
+  margin = abs(mult*sd(derivative))
+  frames$fcolor = as.factor(ifelse(abs(derivative-mean(derivative))>margin,"HIGH","LOW"))
+  usr_palette <- frames$hexRGB                                                #define a palette for ggplot's fields
+  names(usr_palette) <- usr_palette
+  p = ggplot(data=frames,aes(x=seconds))+
+    geom_rect(mapping=aes(xmin=seconds-unit, xmax=seconds,
+                          ymin=max(range(channel)),
+                          ymax=min(range(channel)), fill=hexRGB))+
+    geom_line(aes(y = range(channel)), stat="smooth",method = "lm",
+              formula = y ~ poly(x, 26), se = FALSE,color = "white",alpha=0.7,size=0.5)+
+    geom_line(aes(y = range(channel)), stat="smooth",method = "lm",
+              formula = y ~ poly(x, npoly), se = FALSE,color = "white",linetype = "dotted",alpha=0.4,size=1)+
+    scale_fill_manual(name = "Value", values = usr_palette)+
+    scale_x_continuous(expand = c(0.01, 0))+
+    scale_y_continuous(expand = c(0.01, 0))+
+    guides(fill=FALSE)+
+    theme_minimal()
+  plot(p)
+
+  q = ggplot(data=frames,aes(x=seconds))+
+    geom_rect(mapping=aes(xmin=seconds-unit, xmax=seconds,
+                          ymin=max(derivative),
+                          ymax=min(derivative), fill=hexRGB))+
+    geom_line(aes(y = derivative), color = "white",alpha=0.7,size=0.5)+
+    geom_point(aes(y = derivative, color = fcolor,size=fcolor ,alpha=fcolor),shape=15)+
+    geom_line(aes(y = mean(derivative)+margin), color = "white",linetype = "dotted",alpha=0.4,size=1)+
+    geom_line(aes(y = mean(derivative)-margin), color = "white",linetype = "dotted",alpha=0.4,size=1)+
+    scale_color_manual(name = "Value", values = unlist(list("HIGH"="red","LOW"="white")))+
+    scale_size_manual(name = "Value", values = unlist(list("HIGH"=2,"LOW"=0.1)))+
+    scale_alpha_manual(name = "Value", values = unlist(list("HIGH"=0.8,"LOW"=0.1)))+
+    scale_fill_manual(name = "Value", values = usr_palette)+
+    scale_x_continuous(expand = c(0.01, 0))+
+    scale_y_continuous(expand = c(0.01, 0))+
+    guides(fill=FALSE)+
+    theme_minimal()
+  plot(q)
 }
 
 #' plotColor
