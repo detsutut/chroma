@@ -229,7 +229,7 @@ temperature <- function(frames){
               formula = y ~ poly(x, 26), se = FALSE,color = "white",alpha=0.8,size=1)+
     geom_line(aes(y = range(distance)), stat="smooth",method = "lm", linetype = "dotted",
               formula = y ~ poly(x, 1), se = FALSE,color = "white",alpha=0.8,size=1)+
-    geom_line(aes(y = distance*0+0.01), color = "white",linetype = "longdash",alpha=0.8,size=1)+
+    geom_line(aes(y = distance*0+0.01), color = "red",linetype = "longdash",alpha=0.8,size=1)+
     geom_line(aes(y = distance*0+0.32), color = "yellow",linetype = "longdash",alpha=0.8,size=1)+
     geom_line(aes(y = distance*0+0.33), color = "magenta",linetype = "longdash",alpha=0.8,size=1)+
     geom_line(aes(y = distance*0+0.65), color = "green",linetype = "longdash",alpha=0.8,size=1)+
@@ -276,7 +276,7 @@ plotChannel <- function(frames,channel=c("h","s","l","r","g","b"),npoly = c(1,2,
                           ymin=max(range(channel)),
                           ymax=min(range(channel)), fill=hexRGB))+
     geom_line(aes(y = range(channel)), stat="smooth",method = "lm",
-              formula = y ~ poly(x, 26), se = FALSE,color = "white",alpha=0.7,size=0.5)+
+              formula = y ~ poly(x, 10), se = FALSE,color = "white",alpha=0.7,size=0.5)+
     geom_line(aes(y = range(channel)), stat="smooth",method = "lm",
               formula = y ~ poly(x, npoly), se = FALSE,color = "white",linetype = "dotted",alpha=0.4,size=1)+
     scale_fill_manual(name = "Value", values = usr_palette)+
@@ -370,18 +370,32 @@ plotFrameline <- function(frames, verbose = 0, summary = TRUE, vivid = FALSE, ti
 #' print("example")
 #'
 #' @export
-plotTimeWindows <- function(vivid = TRUE, verbose = 1,title="Movie frameline",subtitle = "Time Windows",left="window width [seconds]"){
-  frames <-getFrames()[[1]]
+plotTimeWindows <- function(frames = NULL, vivid = TRUE, verbose = 1,title="Frameline Time Windows",subtitle = "",left="window size [seconds]"){
+  if(is.null(frames)) frames <-getFrames()[[1]]
   seconds <- round(exp(c(0:round(log(attributes(frames)$duration/2)))))
   gglist <- list()
+  uniques <- list()
   for(i in 1:length(seconds)){
     f <- groupframes(frames,seconds = seconds[i])
     attributes(f)$title <- seconds[i]
     p<-plotSingleFrameline(f, verbose = verbose, vivid = vivid)
     gglist[[i]] <- p
+    uniques[[i]] <- unique(f$hexRGB)
   }
   if(verbose==0) title <- left <- subtitle <- NULL
+  y = unlist(lapply(uniques,length))
+  y_trs = which(y<0.10*y[1])[1]
+  y_trs_log = which(log(y)<0.37*log(y[1]))[1]
+  sec_trs = round(mean(c(seconds[y_trs],seconds[y_trs-1])))
+  sec_trs_log = round(mean(c(seconds[y_trs_log],seconds[y_trs_log-1])))
+  plot(seconds,log(y), type="b", xlab = "time window size [seconds]", ylab = "palette size (log)")
+  title("Colors displayed vs window size")
+  abline(v=sec_trs, col="blue", lty = 2)
+  abline(v=sec_trs_log, col="red", lty = 2)
+  text(sec_trs, log(y[1]), paste("soft:",sec_trs, "s"), col = "blue", pos=4)
+  text(sec_trs_log, log(y[2]), paste("hard:",sec_trs_log, "s"), col = "red", pos=4)
   f <- do.call("grid.arrange", c(grobs = gglist, ncol=1,top = toupper(title),left = left, bottom = subtitle))
+  return(c(sec_trs,sec_trs_log))
 }
 
 #' plotSingleFrameline
@@ -503,6 +517,7 @@ plotTilesSummary <- function(summary,mode="",verbose = 0,title="MOVIE SUMMARY", 
   }
   switch(mode,
          h={
+           verbose = 0
            temp_hex <- unlist(lapply(summary$RGB,hueOnly))
            names(temp_hex) <- temp_hex
            summary$hex <- temp_hex
@@ -521,7 +536,7 @@ plotTilesSummary <- function(summary,mode="",verbose = 0,title="MOVIE SUMMARY", 
            names(temp_hex) <- temp_hex
            summary$hex <- temp_hex
            val <- hslGet(summary$RGB,"s")
-           text <- val
+           text <- round(val,digits = 2)
            max <- summary[which(val == max(val)),]
            min <- summary[which(val == min(val)),]
            p <- ggplot(data = summary, aes(x = episode, y = season)) +
@@ -536,7 +551,7 @@ plotTilesSummary <- function(summary,mode="",verbose = 0,title="MOVIE SUMMARY", 
            summary$hex <- temp_hex
            max <- summary[which(summary$lum == max(summary$lum)),]
            min <- summary[which(summary$lum == min(summary$lum)),]
-           text <- summary$lum
+           text <- round(summary$lum)
            caption <-paste("BRIGHTNESS channel (brightest:", max$title, " darkest: ",min$title,")",sep="")
            p <- ggplot(data = summary, aes(x = episode, y = season)) +
              geom_tile(data = summary, aes(fill = hex),width=0.85, height=0.85) +
