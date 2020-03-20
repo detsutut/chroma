@@ -1,44 +1,75 @@
-# ChromaR 
+# ChromaR Documentation
 
-> R toolkit to analyze and explore chromatic storytelling in any video source
+ChromaR is an experimental R toolkit for analyzing and exploring chromatic storytelling in movies or any other video source. 
+
+*This documentation assumes that the reader is already familiar with R. If not so, a gentle introduction to R can be found [here](https://rpubs.com/pjmurphy/414993/).*
+
+<p align="center">
+  <img src="src/main.png" alt="frameline_example" width="100%"/>
+  <p align ="center"><small>Output example</small></p>
+</p>
+
+## Summary
+
+1) [Getting Started](https://github.com/detsutut/shinyDBNet#getting-started)
+2) [Example: the Asia dataset](https://github.com/detsutut/shinyDBNet/#example-the-asia-dataset)
+3) [Built With](https://github.com/detsutut/shinyDBNet/#built-with)
+4) [FAQ](https://github.com/detsutut/shinyDBNet/#faq)
+5) [Future Developments](https://github.com/detsutut/shinyDBNet/#future-developments)
+6) [Authors](https://github.com/detsutut/shinyDBNet/#authors)
+7) [Acknowledgements](https://github.com/detsutut/shinyDBNet/#acknowledgements)
+8) [License](https://github.com/detsutut/shinyDBNet/#license)
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+### Installing ChromaR
 
-### Prerequisites
+The ChromaR package is hosted on GitHub and must be therefore installed through Devtools:
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-```
-Step 1
+```r
+> install.packages("devtools")
+> library(devtools)
+> install_github("detsutut/chroma", subdir="chromaR")
+> library(chromaR)
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+### Plotting the first frameline
+
+ChromaR comes with two ready-made lists of datasets: Matrix and Miyazaki. These lists collect the movie datasets for the Matrix trilogy and Miyazaki's filmography. Let's look at "Princess Mononoke":
+
+```r
+> miyazaki = chromaR::miyazaki
+> mononoke = miyazaki[[5]]
+> attr(mononoke, "title")
+
+"1997 - Princess Mononoke"
+
+> mononoke[sample(nrow(mononoke),5),]
+
+frameId R       G       B       hex     lum      
+99055   112.930 125.730 95.100  #707D5F 118.52070
+157672  62.832  54.164  57.341  #3E3639 57.11387 
+80875   66.538  77.007  84.124  #424D54 74.64917  
+19967   56.969  106.630 111.510 #386A6F 92.26850 
+159740  44.664  49.680  60.627  #2C313C 49.37937
+```
 
 ## Built With
 
-* [R](https://www.r-project.org/)
-* [Matlab](https://www.mathworks.com/products/matlab.html)
-* [R Studio](https://www.rstudio.com/) - Open source R IDE
+* [R](https://www.r-project.org/) - Main Language
+* [MATLAB](https://it.mathworks.com/products/matlab.html) - From video source to csv
 
 ## Authors
 
-* **Tommaso Buonocore** - *Initial work* - [Detsutut](https://github.com/detsutut)
+* **Tommaso Buonocore** - *Author and Repository Maintainer* - [GitHub](https://github.com/detsutut), [LinkedIn](https://www.linkedin.com/in/tbuonocore/)
 
-## License
+## Acknowledgements
 
-This project is licensed under the GNU GPLv3 License - see the [LICENSE](LICENSE) file for details
-
-## Acknowledgments
+Thanks for the inspiration to:
 
 * https://thecolorsofmotion.com/
 * http://moviebarcode.tumblr.com/
+
+## License
+
+This project is licensed under the GNU GPLv3 License - see the [LICENSE.md](LICENSE.md) file for details
