@@ -5,8 +5,8 @@ ChromaR is an experimental R toolkit for analyzing and exploring chromatic story
 *This documentation assumes that the reader is already familiar with R. If not so, a gentle introduction to R can be found [here](https://rpubs.com/pjmurphy/414993/).*
 
 <p align="center">
-  <img src="src/main.png" alt="frameline_example" width="100%"/>
-  <p align ="center"><small>Output example</small></p>
+  <img src="src/example.png" alt="frameline example" width="100%"/>
+  <p align ="center"><small>Frameline example</small></p>
 </p>
 
 ## Summary
@@ -33,7 +33,7 @@ The ChromaR package is hosted on GitHub and must be therefore installed through 
 > library(chromaR)
 ```
 
-### Plotting the first frameline
+### Inspecting Default Datasets
 
 ChromaR comes with two ready-made lists of datasets: Matrix and Miyazaki. These lists collect the movie datasets for the Matrix trilogy and Miyazaki's filmography. Let's look at "Princess Mononoke":
 
@@ -53,6 +53,22 @@ frameId R       G       B       hex     lum
 19967   56.969  106.630 111.510 #386A6F 92.26850 
 159740  44.664  49.680  60.627  #2C313C 49.37937
 ```
+
+Here we see 5 random rows from the Mononoke dataset. Each row represents a single frame of the movie. For each frame, we collect the average R, G and B value, its Hex string equivalent and the average luminance.
+
+### Plotting the First Frameline
+
+In order to draw a nice plot for Mononoke, we must merge the frames together.
+
+```r
+> mononoke_grouped = groupframes(mononoke, seconds = 10)
+> plotFrameline(mononoke_grouped, verbose = 1)
+```
+
+<p align="center">
+  <img src="src/mononoke.png" alt="mononoke frameline" width="100%"/>
+  <p align ="center"><small>Mononoke</small></p>
+</p>
 
 ## Built With
 
