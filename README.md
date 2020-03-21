@@ -11,11 +11,11 @@ ChromaR is an experimental R toolkit for analyzing and exploring chromatic story
 
 ## Summary
 
-* [Getting Started](https://github.com/detsutut/shinyDBNet#getting-started)
-* [Built With](https://github.com/detsutut/shinyDBNet/#built-with)
-* [Authors](https://github.com/detsutut/shinyDBNet/#authors)
-* [Acknowledgements](https://github.com/detsutut/shinyDBNet/#acknowledgements)
-* [License](https://github.com/detsutut/shinyDBNet/#license)
+* [Getting Started](https://github.com/detsutut/chroma#getting-started)
+* [Built With](https://github.com/detsutut/chroma#built-with)
+* [Authors](https://github.com/detsutut/chroma#authors)
+* [Acknowledgements](https://github.com/detsutut/chroma#acknowledgements)
+* [License](https://github.com/detsutut/chroma#license)
 
 ## Getting Started
 
