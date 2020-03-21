@@ -5,8 +5,8 @@ ChromaR is an experimental R toolkit for analyzing and exploring chromatic story
 *This documentation assumes that the reader is already familiar with R. If not so, a gentle introduction to R can be found [here](https://rpubs.com/pjmurphy/414993/).*
 
 <p align="center">
-  <img src="src/example.png" alt="frameline example" width="100%"/>
-  <p align ="center"><small>Frameline example</small></p>
+  <img src="https://miro.medium.com/max/7680/1*fDmp6lWqmpQXyEb8KYYQaA.png" alt="frameline example" width="100%"/>
+  <p align ="center"><small>Examples of framelines</small></p>
 </p>
 
 ## Summary
