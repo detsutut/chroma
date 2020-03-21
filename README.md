@@ -1,6 +1,10 @@
 # ChromaR Documentation
 
 ChromaR is an experimental R toolkit for analyzing and exploring chromatic storytelling in movies or any other video source. 
+What does this actually mean? You can check it reading this two articles:
+
+* [Getting StartedExploring chromatic storytelling in movies with R: Introduction](https://towardsdatascience.com/exploring-chromatic-storytelling-with-r-part-1-8e9ddf8d4187)
+* [Exploring chromatic storytelling in movies with R: the ChromaR package](https://towardsdatascience.com/the-chromar-package-892b716ee2c9)
 
 *This documentation assumes that the reader is already familiar with R. If not so, a gentle introduction to R can be found [here](https://rpubs.com/pjmurphy/414993/).*
 
@@ -33,10 +37,31 @@ The ChromaR package is hosted on GitHub and must be therefore installed through 
 
 ### Inspecting Default Datasets
 
-ChromaR comes with two ready-made lists of datasets: Matrix and Miyazaki. These lists collect the movie datasets for the Matrix trilogy and Miyazaki's filmography. Let's look at "Princess Mononoke":
+ChromaR exposes two ready-to-go databases you can use for practice purposes: Matrix and Miyazaki. These two lists collect the movie datasets for the Matrix trilogy and Miyazaki's (partial) filmography. 
+Let's look at the latter, focusing then on "Princess Mononoke":
 
 ```r
 > miyazaki = chromaR::miyazaki
+> miyazaki_grouped = lapply(miyazaki, function(movie){groupframes(movie,seconds=5)})
+> getSummary(miyazaki_grouped)
+
+           R         G        B       lum duration     RGB                                     title frameId
+1   95.43707  84.02420 76.22149  86.58976     7020 #5F544C 1984 - Nausicaa of the Valley of the Wind       1
+2   70.16424  72.72785 70.92556  71.76052     7470 #464846           1986 - Laputa Castle in the Sky       2
+3   75.58941  82.22896 74.08047  79.34076     5185 #4B524A                 1988 - My Neighbor Totoro       3
+4   85.45816  93.22114 88.66284  90.39083     5595 #555D58                        1992 - Porco Rosso       4
+5   58.40236  65.24263 61.49390  62.77819     7995 #3A413D                  1997 - Princess Mononoke       5
+6   77.02667  87.91691 91.37884  85.03065     6180 #4D575B            1998 - Kiki's Delivery Service       6
+7   95.17101  83.02897 68.00188  85.01860     7470 #5F5344                     2001  - Spirited Away       7
+8   81.94425  77.87252 67.05723  77.90436     7145 #514D43               2005 - Howl's Moving Castle       8
+9  105.48353 112.59336 96.48504 108.68850     6045 #697060      2008 - Ponyo on the Cliff by the Sea       9
+10  92.98617  97.15226 80.36500  94.05584     7585 #5C6150                     2013 - The Wind Rises      10
+```
+
+First, we applied the `groupframes`function to each movie in the collection, then we displayed a summary of it through `getSummary`, which shows the average RGB triplet for each movie along with other details.
+Moving to the single movie, let's look into Princess Mononoke:
+
+```r
 > mononoke = miyazaki[[5]]
 > attr(mononoke, "title")
 
@@ -52,11 +77,11 @@ frameId R       G       B       hex     lum
 159740  44.664  49.680  60.627  #2C313C 49.37937
 ```
 
-Here we see 5 random rows from the Mononoke dataset. Each row represents a single frame of the movie. For each frame, we collect the average R, G and B value, its Hex string equivalent and the average luminance.
+Here we see 5 random rows from the Mononoke dataset. Each row represents a single frame of the movie. For each frame, we collect the average R, G and B value, its Hex string equivalent and the average luminance. This is all we need to plot the framelines.
 
 ### Plotting the First Frameline
 
-In order to draw a nice plot for Mononoke, we must merge the frames together.
+In order to draw a nice plot for Mononoke, we have to merge the frames together first. 
 
 ```r
 > mononoke_grouped = groupframes(mononoke, seconds = 10)
@@ -66,6 +91,13 @@ In order to draw a nice plot for Mononoke, we must merge the frames together.
 <p align="center">
   <img src="src/mononoke.png" alt="mononoke frameline" width="100%"/>
   <p align ="center"><small>Mononoke</small></p>
+</p>
+
+Here we use a 10 seconds merging window, but you can try to set bigger values to get thicker bars. If the 'seconds' argument is not provided, a merging window will be calculated automatically.
+
+<p align="center">
+  <img src="https://miro.medium.com/max/5728/1*eH2QpxIsNFh-psiPy09LEA.png" alt="mononoke frameline" width="100%"/>
+  <p align ="center"><small>Changing the merging window width changes the appearance of the plot</small></p>
 </p>
 
 ## Generate Your Own Dataset
@@ -113,7 +145,8 @@ for i = 1:tot
     csvwrite(path_output,palette)
 end
 ```
-This means that **you must have Matlab installed** on your local machine.
+This means that **you must have Matlab installed** on your local machine. 
+The script above inspects the video source frame by frame. Each frame is a Height×Width×3 tensor. Since we are mostly interested in exploring the color trend over the entire clip rather than focusing on the palette of a single frame at this point, the only information we need to extract here is the average color (i.e RGB triplet) of each frame.
 
 ## Built With
 
