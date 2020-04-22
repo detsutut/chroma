@@ -1,4 +1,5 @@
 .Rhistory
 .Rproj.user
 chromaR.Rcheck
-.tar.gz
+*.tar.gz
+other

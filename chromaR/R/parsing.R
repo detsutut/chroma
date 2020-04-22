@@ -2,7 +2,9 @@
 #'
 #' getFrames
 #'
-#' @param orderBySeason orderBySeason
+#' @param paths files full path. Optional in Windows
+#' @param names custom name for imported clips. Optional.
+#' @param orderBySeason orderBySeason. FALSE by default.
 #'
 #' @return frames
 #'
@@ -10,14 +12,21 @@
 #' print("example")
 #'
 #' @export
-getFrames <- function(orderBySeason=FALSE){
+getFrames <- function(paths=c(NULL),names=c(NULL),orderBySeason=FALSE){
   #=================================================
   #=         1 - retrieve files and names          =
   #=================================================
-  paths <- choose.files(caption = "Select files",multi = TRUE,                         #get file paths
-                       filters = matrix(c("All files","*.*","Csv files","*.csv"),
-                                        ncol = 2, byrow = TRUE ))
-  names <- tools::file_path_sans_ext(basename(paths))                                  #get file names                                     #    output path
+  if((Sys.info()['sysname']=="Windows")&(length(paths)==0)){
+    paths <- choose.files(caption = "Select files",multi = TRUE,                       #get file paths
+                         filters = matrix(c("All files","*.*","Csv files","*.csv"),
+                                          ncol = 2, byrow = TRUE ))
+  } else {
+    if(length(paths)==0) {
+      errorCondition("Cannot retrieve path and name for files")
+      return(NULL)
+    }
+  }
+  if(length(names)==0) names <- tools::file_path_sans_ext(basename(paths))            #get file names
   csvRGB <- lapply(paths,function(path){read.csv(path,header = FALSE)})                #    csv files
   framesCollection <- list()
   #=================================================
@@ -25,7 +34,7 @@ getFrames <- function(orderBySeason=FALSE){
   #=================================================
   for (i in 1:length(paths)) {
     names(csvRGB[[i]]) <- c("R","G","B")
-    frames <- data.frame(csvRGB[[i]],                                                  #R,G,B channels
+    frames <- data.frame(csvRGB[[i]],                                                 #R,G,B channels
                         hex =rgb(csvRGB[[i]]$R, csvRGB[[i]]$G, csvRGB[[i]]$B,         #hex color of frame
                                  maxColorValue=255),
                         lum =luminance(csvRGB[[i]]$R, csvRGB[[i]]$G, csvRGB[[i]]$B),  #luminance of frame
