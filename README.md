@@ -182,6 +182,23 @@ Similar conclusions may be drawn inspecting the hue channel trend through the `p
   <p align ="center"><sub>Hue channel trend and its derivative</sub></p>
 </p>
 
+### Chord Diagrams
+
+ChromaR also provides an utility to track color transitions from a frame to the following one. The `colorCircle` function generates a chord diagram (a graphical method of displaying the inter-relationships between data) where each frame is arranged radially around a circle, with the color transitions between frames drawn as arcs connecting the source with the endpoint.
+
+```r
+> colorCircle(ldr_episode1, extra = TRUE)        # extra = TRUE adds more color shades
+```
+
+### Palette Extractor (Experimental)
+
+The `extractFramePalette` function allows to extract color palettes from JPEG frames using k-means clustering.
+This fuction is still under developement and doesn't work properly yet.
+
+```r
+> extractFramePalette(MyJpegFramePath, paletteDim = 5, title="My Frame", subtitle="Palette")
+```
+
 ## Generate Your Own Dataset
 
 If you want to explore your own clips, you must convert your source from video to collection of averaged pixels.
@@ -241,10 +258,7 @@ The script above inspects the video source frame by frame. Each frame is a Heigh
 
 ## Acknowledgements
 
-Thanks for the inspiration to:
-
-* https://thecolorsofmotion.com/
-* http://moviebarcode.tumblr.com/
+Thanks to [thecolorsofmotion](https://thecolorsofmotion.com/) and [moviebarcode](http://moviebarcode.tumblr.com/) for the inspiration.
 
 ## License
 
