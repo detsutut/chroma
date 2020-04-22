@@ -10,7 +10,7 @@ What does this actually mean? You can check it reading this two articles:
 
 <p align="center">
   <img src="https://miro.medium.com/max/7680/1*fDmp6lWqmpQXyEb8KYYQaA.png" alt="frameline example" width="100%"/>
-  <p align ="center"><small>Examples of framelines</small></p>
+  <p align ="center"><sub>Examples of framelines</sub></p>
 </p>
 
 ## Summary
@@ -90,14 +90,96 @@ In order to draw a nice plot for Mononoke, we have to merge the frames together 
 
 <p align="center">
   <img src="src/mononoke.png" alt="mononoke frameline" width="100%"/>
-  <p align ="center"><small>Mononoke</small></p>
+  <p align ="center"><sub>Mononoke</sub></p>
 </p>
 
-Here we use a 10 seconds merging window, but you can try to set bigger values to get thicker bars. If the 'seconds' argument is not provided, a merging window will be calculated automatically.
+Here we use a 10 seconds merging window, but you can try to set bigger values to get thicker bars. If the `seconds` argument is not provided, a merging time window will be calculated automatically.
 
 <p align="center">
   <img src="https://miro.medium.com/max/5728/1*eH2QpxIsNFh-psiPy09LEA.png" alt="mononoke frameline" width="100%"/>
-  <p align ="center"><small>Changing the merging window width changes the appearance of the plot</small></p>
+  <p align ="center"><sub>Changing the merging window width changes the appearance of the plot</sub></p>
+</p>
+
+## Additional Features
+
+### Time Windows
+
+When we merge frames together through `groupframes`, the time window we pick with the `seconds` argument will affect the aesthetic outcome of our plot. In fact, depending on this parameter, the resulting frameline could be sharp or very blurred.
+A 5-seconds window is usually fine for most of the movies, but you can visually tune it using the 'plotTimeWindows' function.
+
+```r
+> nausicaa = chromaR::miyazaki[[1]]
+> plotTimeWindows(nausicaa)
+```
+
+<p align="center">
+  <img src="https://miro.medium.com/max/1400/1*PivP6hNc3Fvv34pc5JNlqw.png" alt="nausicaa cutoffs" width="100%"/>
+  <p align ="center"><sub>The algorithm suggests two different cutoffs: a soft one (sharp frameline, most of the color information is preserved) and a hard one (blurried frameline, defined by the time constant of the exponential decay)</sub></p>
+</p>
+
+<p align="center">
+  <img src="https://miro.medium.com/max/1400/1*-7eqrBODaPNQpaaOUYioXA.jpeg" alt="nausicaa timewindows" width="100%"/>
+  <p align ="center"><sub>…or you can simply pick up your favourite window size by visual inspection</sub></p>
+</p>
+
+### Summary Tiles
+
+A chromatic study on entire seasons or movie franchises can be focused on many different features. Summaries about luminance, hue and saturation can be retrieved using the `getSummary` function.
+
+```r
+> ldr = getFrames()
+> ldr.grouped = lapply(ldr,function(x){groupframes(x,seconds = 5)})
+> ldr.summary = getSummary(ldr.grouped)
+
+> plotTilesSummary(ldr.summary,
+                 mode = "lum",                      #lum = luminance, h = hue, s = saturation
+                 verbose = 1,
+                 title = "Love Death & Robots",
+                 subtitle = "Brightness")
+```
+
+<p align="center">
+  <img src="https://miro.medium.com/max/1400/1*xFvTDkBlR8aQErQPXUF8SA.png" alt="love death & robots brightness summary" width="100%"/>
+  <p align ="center"><sub>Netflix's Love, Death & Robots brightness summary</sub></p>
+</p>
+
+<p align="center">
+  <img src="https://miro.medium.com/max/1400/1*s-kTMmFxQ4u0FyArELd9NA.png" alt="nausicaa timewindows" width="100%"/>
+  <p align ="center"><sub>Netflix's Love, Death & Robots summary for hue and saturation</sub></p>
+</p>
+
+Saturation is normalized, while luminance goes from 0 to 255.
+
+### Channels Temporal Inspection
+
+ChromaR exposes some useful function to inspect color channels' trends over time.
+The `temperature` function measures and plot the distance of the hue of each frame from pure red.
+
+```r
+> ldr_episode1 = ldr.grouped[[1]]
+> ldr_episode2 = ldr.grouped[[2]]
+> temperature(ldr_episode1)
+> temperature(ldr_episode2)
+```
+
+<p align="center">
+  <img src="https://miro.medium.com/max/1400/1*xFvTDkBlR8aQErQPXUF8SA.png" alt="love death & robots brightness summary" width="100%"/>
+  <p align ="center"><sub>Netflix's Love, Death & Robots brightness summary</sub></p>
+</p>
+
+<p align="center">
+  <img src="https://miro.medium.com/max/1400/1*s-kTMmFxQ4u0FyArELd9NA.png" alt="love death & robots summary for hue and saturation" width="100%"/>
+  <p align ="center"><sub>Netflix's Love, Death & Robots summary for hue and saturation</sub></p>
+</p>
+
+Similar conclusions may be drawn inspecting the hue channel trend through the `plotChannel` function, which returns the derivative trend in addition to the channel plot.
+
+```r
+> plotChannel(ldr_episode1, channel = "h", npoly = 3)
+```
+<p align="center">
+  <img src="https://miro.medium.com/max/1400/1*I_0i3Ugmru72uUwiCrUGBA.png" alt="nausicaa timewindows" width="100%"/>
+  <p align ="center"><sub>Hue channel trend and its derivative</sub></p>
 </p>
 
 ## Generate Your Own Dataset
