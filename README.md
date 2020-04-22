@@ -139,16 +139,9 @@ A chromatic study on entire seasons or movie franchises can be focused on many d
 ```
 
 <p align="center">
-  <img src="https://miro.medium.com/max/1400/1*xFvTDkBlR8aQErQPXUF8SA.png" alt="love death & robots brightness summary" width="100%"/>
-  <p align ="center"><sub>Netflix's Love, Death & Robots brightness summary</sub></p>
+  <img src="https://miro.medium.com/max/1400/1*UNktLaKFk87MTjCC0bmawQ.png" alt="Temperature comparison between two episodes" width="100%"/>
+  <p align ="center"><sub>Temperature comparison between two episodes</sub></p>
 </p>
-
-<p align="center">
-  <img src="https://miro.medium.com/max/1400/1*s-kTMmFxQ4u0FyArELd9NA.png" alt="nausicaa timewindows" width="100%"/>
-  <p align ="center"><sub>Netflix's Love, Death & Robots summary for hue and saturation</sub></p>
-</p>
-
-Saturation is normalized, while luminance goes from 0 to 255.
 
 ### Channels Temporal Inspection
 
