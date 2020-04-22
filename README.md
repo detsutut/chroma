@@ -16,6 +16,7 @@ What does this actually mean? You can check it reading this two articles:
 ## Summary
 
 * [Getting Started](https://github.com/detsutut/chroma#getting-started)
+* [Additional Features](https://github.com/detsutut/chroma#additional-features)
 * [Generate your own dataset](https://github.com/detsutut/chroma#generate-your-own-dataset)
 * [Built With](https://github.com/detsutut/chroma#built-with)
 * [Authors](https://github.com/detsutut/chroma#authors)
