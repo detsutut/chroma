@@ -195,8 +195,8 @@ This fuction is still under developement and doesn't work properly yet.
 
 ## Generate Your Own Dataset
 
-If you want to explore your own clips, you must convert your source from video to collection of averaged pixels.
-To do this, you need to run the following Matlab script
+If you want to explore your own clips, you must convert your video source to a collection of averaged pixels first.
+In order to do this, you need to run the following Matlab script.
 
 ```matlab
 [names,path] = uigetfile({'*.mp4;*.m4v;*.3gp;*.mov;*.wmv;*.avi;*.webm;*.mkv;*.flv;*.mpeg;*.mpg',...
