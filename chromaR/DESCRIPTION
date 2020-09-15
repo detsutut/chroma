@@ -7,20 +7,15 @@ Maintainer: Tommaso Buonocore <buonocore.tsm@gmail.com>
 Description: R toolkit to analyze and explore chromatic storytelling in any video source
     in any video source, previously converted in a csv sequence of frames.
 Imports:
-  dplyr,
-  stringr,
-  ggplot2,
-  corrplot,
-  Hmisc,
-  grid,
-  gridExtra,
-  plotwidgets,
-  circlize,
-  jpeg,
-  scales,
-  imager,
-  LICORS,
-  grDevices
+    utils,
+    tools,
+    ggplot2,
+    graphics,
+    plotwidgets,
+    circlize,
+    imager,
+    grDevices,
+    LICORS
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true

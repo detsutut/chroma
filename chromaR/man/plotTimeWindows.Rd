@@ -14,15 +14,17 @@ plotTimeWindows(
 )
 }
 \arguments{
-\item{vivid}{frames}
+\item{frames}{frames}
 
-\item{verbose}{frames}
+\item{vivid}{vivid}
 
-\item{title}{frames}
+\item{verbose}{verbose}
 
-\item{subtitle}{frames}
+\item{title}{title}
 
-\item{left}{frames}
+\item{subtitle}{subtitle}
+
+\item{left}{left}
 }
 \value{
 none

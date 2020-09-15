@@ -1,18 +1,5 @@
-#' @import utils
-#' @import stats
 #' @import graphics
 #' @import ggplot2
-#' @import dplyr
-#' @import stringr
-#' @import plotwidgets
-#' @import gridExtra
-#' @import grid
-#' @import corrplot
-#' @import Hmisc
-#' @import circlize
-#' @import jpeg
-#' @import scales
-#' @import grDevices
 
 NULL
 
@@ -47,6 +34,7 @@ luminance <- function(r,g,b){
 #' print("example")
 #'
 #' @export
+#' @importFrom plotwidgets modCol
 vividHex <- function(hexString, intensity = c("light","medium","strong","ultra")){
   darkIntensity <- switch(EXPR=intensity,light = .05,medium = .1,strong =.2, ultra =.3)
   satIntensity <- switch(EXPR=intensity,light = .1,medium = .2,strong =.3, ultra =.4)
@@ -65,6 +53,7 @@ vividHex <- function(hexString, intensity = c("light","medium","strong","ultra")
 #' print("example")
 #'
 #' @export
+#' @importFrom plotwidgets modCol
 lumOnly <- function(hexString){
   return(modCol(hexString, darken = 0, saturate = -1, modhue = 0))
 }
@@ -81,6 +70,7 @@ lumOnly <- function(hexString){
 #' print("example")
 #'
 #' @export
+#' @importFrom plotwidgets hsl2col
 hueOnly <- function(hexString){
   return(hsl2col(as.matrix(c(hslGet(hexString,"h"),1,0.5))))
 }
@@ -98,6 +88,7 @@ hueOnly <- function(hexString){
 #' print("example")
 #'
 #' @export
+#' @importFrom plotwidgets hsl2col
 satOnly <- function(hexString){
   return(hsl2col(as.matrix(c(1,hslGet(hexString,"s"),0.5))))
 }
@@ -115,6 +106,7 @@ satOnly <- function(hexString){
 #' print("example")
 #'
 #' @export
+#' @importFrom plotwidgets col2hsl
 hslGet <- function(hexString, channel=c("H","S","V")){
   values <- list()
   for(hex in hexString){
@@ -135,6 +127,7 @@ hslGet <- function(hexString, channel=c("H","S","V")){
 #' print("example")
 #'
 #' @export
+#' @importFrom plotwidgets col2hsl
 isWarm <- function(hexString){
   hue <- col2hsl(hexString)["H",][[1]]
   sat <- col2hsl(hexString)["S",][[1]]
@@ -162,6 +155,8 @@ isWarm <- function(hexString){
 #' print("example")
 #'
 #' @export
+#' @importFrom circlize chordDiagram
+#' @importFrom circlize circos.clear
 colorCircle <- function(frames, extra = FALSE){
   palette <- chromaRenv$colorHueRef
   if(extra) palette <- chromaRenv$colorHueRefExtra
@@ -188,6 +183,7 @@ colorCircle <- function(frames, extra = FALSE){
 #' print("example")
 #'
 #' @export
+#' @importFrom plotwidgets col2hsl
 getHueRef <- function(hexString, extra = FALSE){
   palette <- chromaRenv$colorHueRef
   if(extra) palette <- chromaRenv$colorHueRefExtra
@@ -363,11 +359,12 @@ plotFrameline <- function(frames, verbose = 0, summary = TRUE, vivid = FALSE, ti
 #'
 #' plotTimeWindows
 #'
-#' @param left frames
-#' @param verbose frames
-#' @param vivid frames
-#' @param title frames
-#' @param subtitle frames
+#' @param left left
+#' @param frames frames
+#' @param verbose verbose
+#' @param vivid vivid
+#' @param title title
+#' @param subtitle subtitle
 #'
 #' @return none
 #'
@@ -684,10 +681,10 @@ theme_semiVoid <- function(xaxis = FALSE){
 #'
 #' extractFramePalette
 #'
-#' @param jpegFramePath jpegFramePath
-#' @param paletteDim paletteDim
-#' @param title title
-#' @param subtitle subtitle
+#' @param img_path img_path
+#' @param palette_dim palette_dim
+#' @param max_res max_res
+#' @param graphics graphics
 #'
 #' @return none
 #'

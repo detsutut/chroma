@@ -12,12 +12,16 @@
 #' print("example")
 #'
 #' @export
+#' @importFrom utils choose.files
+#' @importFrom utils read.csv
+#' @importFrom tools file_path_sans_ext
+#' @importFrom grDevices rgb
 getFrames <- function(paths=c(NULL),names=c(NULL),orderBySeason=FALSE){
   #=================================================
   #=         1 - retrieve files and names          =
   #=================================================
   if((Sys.info()['sysname']=="Windows")&(length(paths)==0)){
-    paths <- choose.files(caption = "Select files",multi = TRUE,                       #get file paths
+    paths <- utils::choose.files(caption = "Select files",multi = TRUE,                       #get file paths
                          filters = matrix(c("All files","*.*","Csv files","*.csv"),
                                           ncol = 2, byrow = TRUE ))
   } else {
@@ -64,6 +68,7 @@ getFrames <- function(paths=c(NULL),names=c(NULL),orderBySeason=FALSE){
 #' print("example")
 #'
 #' @export
+#' @importFrom grDevices rgb
 groupframes <- function(frames,seconds=NULL,fps=chromaRenv$fps){
   if(is.null(seconds)) {
     seconds <- round(length(frames$frameId)/(fps*chromaRenv$linesize$bold))

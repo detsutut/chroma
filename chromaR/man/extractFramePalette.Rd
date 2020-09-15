@@ -12,13 +12,13 @@ extractFramePalette(
 )
 }
 \arguments{
-\item{jpegFramePath}{jpegFramePath}
+\item{img_path}{img_path}
 
-\item{paletteDim}{paletteDim}
+\item{palette_dim}{palette_dim}
 
-\item{title}{title}
+\item{max_res}{max_res}
 
-\item{subtitle}{subtitle}
+\item{graphics}{graphics}
 }
 \value{
 none
