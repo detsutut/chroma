@@ -4,9 +4,15 @@
 \alias{plotFrameline}
 \title{plotFrameline}
 \usage{
-plotFrameline(frames, verbose = 0, summary = TRUE, vivid = FALSE,
-  timeScale = TRUE, title = "MOVIE FRAMELINE",
-  subtitle = "frameline")
+plotFrameline(
+  frames,
+  verbose = 0,
+  summary = TRUE,
+  vivid = FALSE,
+  timeScale = TRUE,
+  title = "MOVIE FRAMELINE",
+  subtitle = "frameline"
+)
 }
 \arguments{
 \item{frames}{frames}

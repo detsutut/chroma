@@ -4,8 +4,13 @@
 \alias{plotTilesSummary}
 \title{plotMultiFrameline}
 \usage{
-plotTilesSummary(summary, mode = "", verbose = 0,
-  title = "MOVIE SUMMARY", subtitle = "")
+plotTilesSummary(
+  summary,
+  mode = "",
+  verbose = 0,
+  title = "MOVIE SUMMARY",
+  subtitle = ""
+)
 }
 \arguments{
 \item{summary}{summary}

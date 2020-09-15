@@ -4,10 +4,14 @@
 \alias{getFrames}
 \title{getFrames}
 \usage{
-getFrames(orderBySeason = FALSE)
+getFrames(paths = c(NULL), names = c(NULL), orderBySeason = FALSE)
 }
 \arguments{
-\item{orderBySeason}{orderBySeason}
+\item{paths}{files full path. Optional in Windows}
+
+\item{names}{custom name for imported clips. Optional.}
+
+\item{orderBySeason}{orderBySeason. FALSE by default.}
 }
 \value{
 frames

@@ -4,10 +4,10 @@
 \alias{plotColor}
 \title{plotColor}
 \usage{
-plotColor(hexString)
+plotColor(colors)
 }
 \arguments{
-\item{hexString}{hexString}
+\item{colors}{list of Hex Strings}
 }
 \value{
 none

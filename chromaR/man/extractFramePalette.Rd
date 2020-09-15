@@ -4,8 +4,12 @@
 \alias{extractFramePalette}
 \title{extractFramePalette}
 \usage{
-extractFramePalette(jpegFramePath = NULL, paletteDim = 10,
-  title = "FRAME ANALYSIS", subtitle = "Palette")
+extractFramePalette(
+  img_path = NULL,
+  palette_dim = 10,
+  max_res = 780,
+  graphics = TRUE
+)
 }
 \arguments{
 \item{jpegFramePath}{jpegFramePath}

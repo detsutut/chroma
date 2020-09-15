@@ -309,7 +309,7 @@ plotChannel <- function(frames,channel=c("h","s","l","r","g","b"),npoly = c(1,2,
 #'
 #' plotColor
 #'
-#' @param hexString hexString
+#' @param colors list of Hex Strings
 #'
 #' @return none
 #'
@@ -317,11 +317,16 @@ plotChannel <- function(frames,channel=c("h","s","l","r","g","b"),npoly = c(1,2,
 #' print("example")
 #'
 #' @export
-plotColor <- function(hexString){
-  plot(c(0, 1), c(0, 1), type= "n", xlab = "", ylab = "",main = hexString)
-  rect(0, 0, 1, 1, density = -50, border = hexString, col=hexString)
-  cat("HSL: ",col2hsl(hexString),"\nRGB: ",col2rgb(hexString),"\n")
+plotColor <- function(colors){
+  paletteSize = length(colors)
+  plot(c(0, 1*paletteSize), c(0, 1), type= "n", axes=FALSE, xlab = "", ylab = "",main = "Color Palette")
+  for(i in 1:paletteSize){
+    rect(0+(i-1),0,0+i,1,
+         border = NA,
+         col = colors[i])
+  }
 }
+
 
 #' plotFrameline
 #'
@@ -342,10 +347,10 @@ plotColor <- function(hexString){
 #'
 #' @export
 plotFrameline <- function(frames, verbose = 0, summary = TRUE, vivid = FALSE, timeScale = TRUE, title="MOVIE FRAMELINE",
-                         subtitle="frameline"){
+                          subtitle="frameline"){
   if(length(frames)==1) {
     return(plotSingleFrameline(frames = frames[[1]],verbose = verbose, summary = summary, vivid = vivid,
-                                                    title = title, subtitle = subtitle))
+                               title = title, subtitle = subtitle))
   } else if(is.data.frame(frames)){
     return(plotSingleFrameline(frames = frames,verbose = verbose, summary = summary, vivid = vivid,
                                title = title, subtitle = subtitle))
@@ -417,7 +422,7 @@ plotTimeWindows <- function(frames = NULL, vivid = TRUE, verbose = 1,title="Fram
 #'
 #' @export
 plotSingleFrameline <- function(frames, verbose = 0, summary = TRUE, vivid = FALSE, title="MOVIE FRAMELINE",
-                         subtitle="frameline", xlim = NULL){
+                                subtitle="frameline", xlim = NULL){
   mins<-hexRGB<-NULL
   frames$mins <- frames$seconds/60                                            #x unit = minutes
   unit <- (frames[2,]$seconds-frames[1,]$seconds)/60
@@ -438,12 +443,12 @@ plotSingleFrameline <- function(frames, verbose = 0, summary = TRUE, vivid = FAL
                           ymax=0, fill=hexRGB), alpha=1)                     #fill tiles with RGB frame color
   if(summary){
     p<- p+annotate("rect", xmin = xlim+0.005*xlim,                            #build the summary tile
-                  xmax = xlim+0.02*xlim,
-                  ymin = 0, ymax = 1,
-                  fill = summary_fill,
-                  linetype = 0,
-                  color = summary_line,
-                  size=0.6)
+                   xmax = xlim+0.02*xlim,
+                   ymin = 0, ymax = 1,
+                   fill = summary_fill,
+                   linetype = 0,
+                   color = summary_line,
+                   size=0.6)
   }
   p<-p+scale_x_continuous(expand = c(0.01, 0),breaks = seq(0,xlim,5))+
     labs(y = attributes(frames)$title)+
@@ -476,13 +481,13 @@ plotSingleFrameline <- function(frames, verbose = 0, summary = TRUE, vivid = FAL
 #'
 #' @export
 plotMultiFrameline <- function(framescollection, verbose = 0, summary = TRUE, vivid = FALSE, timeScale = TRUE,
-                              title="MOVIES FRAMELINES", subtitle="frameline"){
+                               title="MOVIES FRAMELINES", subtitle="frameline"){
   ggplot.list <-  vector("list", length(framescollection))
   if(verbose>1) verbose.iter<-1 else verbose.iter<-verbose
   for(i in 1:length(framescollection)){
     if(timeScale) xlim <- NULL else xlim <- max(unlist(lapply(framescollection,function(x){max(x$seconds)})))/60
     ggplot.list[[i]] <- plotSingleFrameline(framescollection[[i]], verbose = verbose.iter, summary = summary, vivid = vivid,
-                                     title = title, subtitle = subtitle, xlim = xlim)
+                                            title = title, subtitle = subtitle, xlim = xlim)
   }
   if(!timeScale) ggplot.list[[i]] <-  ggplot.list[[i]]+theme_semiVoid(xaxis = verbose>1)
   ggplot.list <- Filter(Negate(is.null), ggplot.list)
@@ -642,11 +647,11 @@ theme_semiVoid <- function(xaxis = FALSE){
     xelem <- element_blank()
     xtick <- element_blank()
     xticklen <- 0
-    } else{
-      xelem <- element_text(angle = 0)
-      xtick <- element_line(color = "grey30",size = 1, linetype = 1,lineend = "square", inherit.blank = FALSE)
-      xticklen <- 1
-    }
+  } else{
+    xelem <- element_text(angle = 0)
+    xtick <- element_line(color = "grey30",size = 1, linetype = 1,lineend = "square", inherit.blank = FALSE)
+    xticklen <- 1
+  }
   return(theme(text = element_text(face = "plain",family = "",colour = "grey30",lineheight = 0.9,hjust = 0.5,vjust = 0.5,angle = 0,margin = margin(),size = 10,debug = FALSE),
                line = element_line(color = "white",size = 0, linetype = 0,lineend = "square", inherit.blank = FALSE),
                # line = element_blank(),
@@ -690,51 +695,69 @@ theme_semiVoid <- function(xaxis = FALSE){
 #' print("example")
 #'
 #' @export
-extractFramePalette <- function(jpegFramePath = NULL, paletteDim = 10,title="FRAME ANALYSIS", subtitle="Palette"){
-  color<-NULL
-  if(is.null(jpegFramePath)) jpegFramePath <- choose.files(caption = "Select files", multi = FALSE)
-  jpegFrame <- readJPEG(jpegFramePath)
-  height <- dim(jpegFrame)[1]
-  width <- dim(jpegFrame)[2]
-  df <- data.frame(
-    x = rep(1:width, each = height),
-    y = rep(height:1, width),
-    R = as.vector(jpegFrame[,,1]),
-    G = as.vector(jpegFrame[,,2]),
-    B = as.vector(jpegFrame[,,3])
-  )
-  km <- kmeans(df[,c("R","G","B")], centers = paletteDim, iter.max = 30)
-  colorPalette <- vividHex(rgb(km$centers),intensity = "light")
+#' @importFrom imager load.image
+#' @importFrom imager resize
+#' @importFrom imager R
+#' @importFrom imager G
+#' @importFrom imager B
+#' @importFrom imager width
+#' @importFrom imager height
+#' @importFrom grDevices convertColor
+#' @importFrom grDevices rgb
+#' @importFrom LICORS kmeanspp
+extractFramePalette <- function(img_path = NULL, palette_dim = 10, max_res = 780, graphics = TRUE){
 
-  km2 <- kmeans(df[,c("R","G","B")], centers = paletteDim*3, iter.max = 30)
-  pal2 <- vividHex(rgb(km2$centers),intensity = "light")
-  pal <- list()
-  while(length(pal)<paletteDim){
-    pal.hdist <- as.matrix((dist(col2hsl(pal2)["H",])))
-    diag(pal.hdist) <- 0
-    colnames(pal.hdist) <- rownames(pal.hdist) <- pal2
-    names <- unique(names(which(pal.hdist == max(apply(pal.hdist,2,max,na.rm=TRUE)), arr.ind = TRUE)[,"row"]))
-    pal <- append(pal,names)
-    pal2 <- setdiff(pal2,names)
+  img = imager::load.image(img_path)
+  while(imager::width(img)+imager::height(img)>max_res){
+    img = imager::resize(img,round(imager::width(img)/2),round(imager::height(img)/2))
   }
-  colorPalette <- unlist(pal)[1:paletteDim]
-  pal2.hdist <- as.matrix((dist(col2hsl(colorPalette)["H",])))
-  colnames(pal2.hdist) <- rownames(pal2.hdist) <- colorPalette
-  # pheatmap(pal2.hdist)
 
-  jpegFrame_pixelate <- t(matrix(km$cluster,nrow = height,ncol = width,byrow = FALSE))
-  jpegFrame_pixelate <- jpegFrame_pixelate[,ncol(jpegFrame_pixelate):1]
-  img <- image(jpegFrame_pixelate,useRaster = TRUE,col =colorPalette)
-  colorPalette.df <- as.data.frame(cbind(id=1:length(colorPalette),color = colorPalette, size = km$size))
-  colorPalette.df$id <- as.numeric(colorPalette.df$id)
-  temp_hex <- levels(colorPalette.df$color)
-  names(temp_hex) <- temp_hex
-  p <- ggplot(data = colorPalette.df, aes(x = id, y = 1)) +
-    geom_tile(data = colorPalette.df, aes(fill = color),width=0.85, height=0.85) +
-    scale_fill_manual(values = temp_hex)+
-    guides(fill=FALSE)+
-    theme_void()+
-    labs(title=toupper(title),
-         subtitle = subtitle)
-  plot(p)
+  r = as.data.frame(imager::R(img))
+  g = as.data.frame(imager::G(img))
+  b = as.data.frame(imager::B(img))
+  img_rgb = cbind(X=r$x,Y=r$y,R=r$value,G=g$value,B=b$value)
+
+  lab = grDevices::convertColor(img_rgb[,c("R","G","B")],from = "sRGB",to="Lab")
+  img_lab = cbind(img_rgb[,c("X","Y")],lab)
+
+  ##K MEANS
+  cl <- LICORS::kmeanspp(img_lab[,c(-1,-2)], palette_dim)
+  cl$cluster = as.character(cl$cluster)
+  for(i in 1:palette_dim){
+    cl$cluster = replace(cl$cluster,
+                         cl$cluster==as.character(i),
+                         grDevices::rgb(grDevices::convertColor(cl$centers[i,],"Lab","sRGB")))
+  }
+  rgbPalette = grDevices::rgb(grDevices::convertColor(cl$centers,"Lab","sRGB"))
+
+  ##GRAPHICS
+  if(graphics){
+    par(mfrow=c(1,2))
+    plot(x=img_rgb[,'X'],
+         y=-img_rgb[,'Y'],
+         col = rgb(img_rgb[,c(-1,-2)]),
+         pch=20,
+         xlab = "", ylab = "", main = "Original",
+         axes=FALSE,
+         xlim = c(min(img_lab[,'X']),max(img_lab[,'X'])))
+    plot(x=img_lab[,'X'],
+         y=-img_lab[,'Y'],
+         col = cl$cluster,
+         pch=20,
+         xlab = "", ylab = "", main = "Reconstructed",
+         axes=FALSE,
+         xlim = c(min(img_lab[,'X']),max(img_lab[,'X'])))
+    par(new=TRUE)
+    width = round((imager::width(img)*0.94)/palette_dim)
+    height = round(imager::height(img)/20)
+    y_base = -imager::height(img)
+    x_base = imager::width(img)*0.03
+    rect(1,y_base-10,imager::width(img),y_base+height*1.2,col=rgb(1,1,1,alpha = 0.5),border = NA)
+    for(i in 1:palette_dim){
+      rect(x_base+width*(i-1),y_base,x_base+width*i,y_base+height,
+           border = NA,
+           col = rgbPalette[i])
+    }
+  }
+  return(rgbPalette)
 }

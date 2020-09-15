@@ -4,8 +4,11 @@
 \alias{plotChannel}
 \title{plotChannel}
 \usage{
-plotChannel(frames, channel = c("h", "s", "l", "r", "g", "b"),
-  npoly = c(1, 2, 3))
+plotChannel(
+  frames,
+  channel = c("h", "s", "l", "r", "g", "b"),
+  npoly = c(1, 2, 3)
+)
 }
 \arguments{
 \item{frames}{frames}

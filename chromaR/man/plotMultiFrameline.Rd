@@ -4,9 +4,15 @@
 \alias{plotMultiFrameline}
 \title{plotMultiFrameline}
 \usage{
-plotMultiFrameline(framescollection, verbose = 0, summary = TRUE,
-  vivid = FALSE, timeScale = TRUE, title = "MOVIES FRAMELINES",
-  subtitle = "frameline")
+plotMultiFrameline(
+  framescollection,
+  verbose = 0,
+  summary = TRUE,
+  vivid = FALSE,
+  timeScale = TRUE,
+  title = "MOVIES FRAMELINES",
+  subtitle = "frameline"
+)
 }
 \arguments{
 \item{framescollection}{frames}

@@ -4,9 +4,15 @@
 \alias{plotSingleFrameline}
 \title{plotSingleFrameline}
 \usage{
-plotSingleFrameline(frames, verbose = 0, summary = TRUE,
-  vivid = FALSE, title = "MOVIE FRAMELINE", subtitle = "frameline",
-  xlim = NULL)
+plotSingleFrameline(
+  frames,
+  verbose = 0,
+  summary = TRUE,
+  vivid = FALSE,
+  title = "MOVIE FRAMELINE",
+  subtitle = "frameline",
+  xlim = NULL
+)
 }
 \arguments{
 \item{frames}{frames}

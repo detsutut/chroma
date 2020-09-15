@@ -4,8 +4,14 @@
 \alias{plotTimeWindows}
 \title{plotTimeWindows}
 \usage{
-plotTimeWindows(vivid = TRUE, verbose = 1, title = "Movie frameline",
-  subtitle = "Time Windows", left = "window width [seconds]")
+plotTimeWindows(
+  frames = NULL,
+  vivid = TRUE,
+  verbose = 1,
+  title = "Frameline Time Windows",
+  subtitle = "",
+  left = "window size [seconds]"
+)
 }
 \arguments{
 \item{vivid}{frames}
