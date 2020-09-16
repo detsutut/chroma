@@ -140,8 +140,13 @@ A chromatic study on entire seasons or movie franchises can be focused on many d
 ```
 
 <p align="center">
-  <img src="https://miro.medium.com/max/1400/1*UNktLaKFk87MTjCC0bmawQ.png" alt="Temperature comparison between two episodes" width="100%"/>
-  <p align ="center"><sub>Temperature comparison between two episodes</sub></p>
+  <img src="https://miro.medium.com/max/1400/1*xFvTDkBlR8aQErQPXUF8SA.png" alt="love death & robots brightness summary" width="100%"/>
+  <p align ="center"><sub>Netflix's Love, Death & Robots brightness summary</sub></p>
+</p>
+
+<p align="center">
+  <img src="https://miro.medium.com/max/1400/1*s-kTMmFxQ4u0FyArELd9NA.png" alt="love death & robots summary for hue and saturation" width="100%"/>
+  <p align ="center"><sub>Netflix's Love, Death & Robots summary for hue and saturation</sub></p>
 </p>
 
 ### Channels Temporal Inspection
@@ -155,15 +160,9 @@ The `temperature` function measures and plot the distance of the hue of each fra
 > temperature(ldr_episode1)
 > temperature(ldr_episode2)
 ```
-
 <p align="center">
-  <img src="https://miro.medium.com/max/1400/1*xFvTDkBlR8aQErQPXUF8SA.png" alt="love death & robots brightness summary" width="100%"/>
-  <p align ="center"><sub>Netflix's Love, Death & Robots brightness summary</sub></p>
-</p>
-
-<p align="center">
-  <img src="https://miro.medium.com/max/1400/1*s-kTMmFxQ4u0FyArELd9NA.png" alt="love death & robots summary for hue and saturation" width="100%"/>
-  <p align ="center"><sub>Netflix's Love, Death & Robots summary for hue and saturation</sub></p>
+  <img src="https://miro.medium.com/max/1400/1*UNktLaKFk87MTjCC0bmawQ.png" alt="Temperature comparison between two episodes" width="100%"/>
+  <p align ="center"><sub>Temperature comparison between two episodes</sub></p>
 </p>
 
 Similar conclusions may be drawn inspecting the hue channel trend through the `plotChannel` function, which returns the derivative trend in addition to the channel plot.
