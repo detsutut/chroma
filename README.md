@@ -183,14 +183,18 @@ ChromaR also provides an utility to track color transitions from a frame to the 
 > colorCircle(ldr_episode1, extra = TRUE)        # extra = TRUE adds more color shades
 ```
 
-### Palette Extractor (Experimental)
+### Palette Extractor
 
-The `extractFramePalette` function allows to extract color palettes from JPEG frames using k-means clustering.
-This fuction is still under developement and doesn't work properly yet.
+The `extractFramePalette` function allows to extract color palettes from image sources using unsupervised machine learning. This feature runs the k-means++ algorithm to extract `palette_dim` main colors from the input image and uses this palette to reconstruct the original image.
 
 ```r
-> extractFramePalette(MyJpegFramePath, paletteDim = 5, title="My Frame", subtitle="Palette")
+> extractFramePalette(imgPath, palette_dim  = 10, max_res =780, graphics = TRUE)
 ```
+
+<p align="center">
+  <img src="https://miro.medium.com/max/770/1*oVsM5Yg9Le1qeMvqrOLvXg.png" alt="breaking bad color palettes" width="100%"/>
+  <p align ="center"><sub>Different sizes of color palettes automatically extracted from a famous Breaking Bad frame</sub></p>
+</p>
 
 ## Generate Your Own Dataset
 
