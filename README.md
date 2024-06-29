@@ -183,6 +183,12 @@ ChromaR also provides an utility to track color transitions from a frame to the 
 > colorCircle(ldr_episode1, extra = TRUE)        # extra = TRUE adds more color shades
 ```
 
+<p align="center">
+  <img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/1*hbQ3eE7qthGHqmrhX0UoKw.png" alt="chord diagrams example" width="100%"/>
+  <p align ="center"><sub>Chord diagram of “Zima Blue” (left) and “Sucker of Souls” (right)</sub></p>
+</p>
+
+
 ### Palette Extractor
 
 The `extractFramePalette` function allows to extract color palettes from image sources using unsupervised machine learning. This feature runs the k-means++ algorithm to extract `palette_dim` main colors from the input image and uses this palette to reconstruct the original image.
